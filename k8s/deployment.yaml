@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clusterpilot-web
+  labels:
+    app: clusterpilot-web
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: clusterpilot-web
+  template:
+    metadata:
+      labels:
+        app: clusterpilot-web
+    spec:
+      containers:
+        - name: web
+          image: DOCKERHUB_USERNAME/clusterpilot-web:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
